@@ -1,0 +1,55 @@
+<!-- views/pages/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+    <link rel="stylesheet" href="/static/css/biography.css">
+</head>
+<body>
+<header class="app-bar paper4">
+    <% include ../partials/header %>
+</header>
+<main class="margin-top">
+    <div class="row">
+        <div class="col-md-8 col-xs-10 col-md-offset-2 col-xs-offset-1">
+            <div class="well">
+                <div class="row">
+                    <div class="col-md-4 biographyImg">
+                        <img src="/images/bioBshim.png" alt='loading' width="300" height="400"/>
+                    </div>
+                    <div class="col-md-8">
+                        <h1><%= professor.name %></h1>
+                        <h2 class="margin-bottom"><%= professor.title %></h2>
+                        <h3 class="margin-bottom"><%= professor.university.department %></h3>
+                        <h3>
+                            <a href="<%= professor.university.URL %>" target="_blank">
+                                <%= professor.university.name %>
+                            </a>
+                        </h3>
+                        <h2 class="margin-bottom"><%= professor.lab.title %></h2>
+                        <h3 class="margin-bottom"><%= professor.lab.name %></h3>
+                    </div>
+                    <div class="col-md-12 textJustify">
+                        <h3><%= professor.bio %></h3>
+                    </div>
+                </div>
+                <hr/>
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="<%= professor.university.URL %>" target="_blank">
+                            Curriculum Vitae
+                        </a>&nbsp(pdf)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>
