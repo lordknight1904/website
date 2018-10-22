@@ -38,7 +38,7 @@ app.use('/pdf', express.static(__dirname + '/public/pdf'));
 app.use('/course', express.static(__dirname + '/data/pdf'));
 app.use(express.static("public"));
 
-mongoose.connect(config.mongoURL, (error) => {
+mongoose.connect(config.mongoURL, { useNewUrlParser: true }, (error) => {
   if (error) {
     console.error('Please make sure Mongodb is installed and running!'); // eslint-disable-line no-console
     throw error;
@@ -66,6 +66,7 @@ app.get('/teaching', (req, res) => {
         courses: [],
       });
     } else {
+      console.log(courses);
       res.render('pages/teaching', {
         courses,
       });
