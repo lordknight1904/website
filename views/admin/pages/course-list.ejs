@@ -1,0 +1,119 @@
+<!doctype html>
+<html class="no-js h-100" lang="en">
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+<body class="h-100">
+<div class="container-fluid">
+    <div class="row">
+        <% include ../partials/left-side-bar.ejs %>
+        <main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
+            <div class="main-navbar sticky-top bg-white">
+                <% include ../partials/menu.ejs %>
+            </div>
+            <div class="main-content-container container-fluid px-4">
+                <!-- Page Header -->
+                <div class="page-header row no-gutters py-4">
+                    <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+                        <span class="text-uppercase page-subtitle">Overview</span>
+                        <h3 class="page-title">Course</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card card-small mb-4">
+                            <div class="card-header border-bottom">
+                                <h6 class="m-0 d-inline-block">Courses</h6>
+                                <button type="submit" form="create-new-course"
+                                        class="mb-2 btn custom-btn-sm btn-sm btn-success mr-1 edit-button float-right">
+                                    <i class="material-icons">add</i>
+                                </button>
+                                <form method="get" action="/admin/course/form" id="create-new-course">
+                                </form>
+                            </div>
+                            <div class="card-body p-0 pb-3 text-center">
+                                <table class="table mb-0">
+                                    <thead class="bg-light">
+                                    <tr>
+                                        <th scope="col" class="border-0">Status</th>
+                                        <th scope="col" class="border-0">Course code</th>
+                                        <th scope="col" class="border-0">Name</th>
+                                        <th scope="col" class="border-0">Time</th>
+                                        <th scope="col" class="border-0">Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <% courses.forEach((c) => { %>
+                                    <tr>
+                                        <td>
+                                            <% if(c.active){ %>
+                                            <i class="fas fa-circle" style="color:green"></i>
+                                            <% } else{ %>
+                                            <i class="fas fa-circle" style="color:red"></i>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <%= c.code %>
+                                        </td>
+                                        <td>
+                                            <% if(c.pdfPath){ %>
+                                            <a href="/course/<%= c.alias %>">
+                                                <%= c.name %>
+                                            </a>
+                                            <% } else{ %>
+                                            <%= c.name %>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <%= c.time %>
+                                        </td>
+                                        <td>
+                                            <form action="/admin/course/<%= c._id %>?_method=DELETE" method="post"
+                                                  id="delete-course-<%= c._id %>"
+                                                  onsubmit="return confirm('Are you sure you want to delete?');">
+                                            </form>
+                                            <form action="/admin/course/lock/<%= c._id %>?_method=PUT" method="post"
+                                                  id="lock-course-<%= c._id %>"
+                                                  onsubmit="return confirm('Are you sure you want to lock?');">
+                                            </form>
+                                            <form action="/admin/course/open/<%= c._id %>?_method=PUT" method="post"
+                                                  id="open-course-<%= c._id %>"
+                                                  onsubmit="return confirm('Are you sure you want to open?');">
+                                            </form>
+                                            <button type="button" class="mb-2 btn custom-btn-sm btn-sm btn-warning mr-1 edit-button">
+                                                <a href="/admin/course/<%= c._id %>">
+                                                    <i class="material-icons">edit</i>
+                                                </a>
+                                            </button>
+                                            <button type="submit" form="delete-course-<%= c._id %>"
+                                                    class="mb-2 btn custom-btn-sm btn-sm btn-danger mr-1 delete-button">
+                                                <i class="material-icons">delete</i>
+                                            </button>
+
+                                            <% if(c.active){ %>
+                                            <button type="submit" form="lock-course-<%= c._id %>"
+                                                    class="mb-2 btn custom-btn-sm btn-sm btn-secondary mr-1">
+                                                <i class="material-icons">lock</i>
+                                            </button>
+                                            <% } else{ %>
+                                            <button type="submit" form="open-course-<%= c._id %>"
+                                                    class="mb-2 btn custom-btn-sm btn-sm btn-outline-secondary mr-1">
+                                                <i class="material-icons">lock_open</i>
+                                            </button>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<% include ../partials/scripts.ejs %>
+</body>
+</html>

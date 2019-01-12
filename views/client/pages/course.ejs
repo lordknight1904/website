@@ -1,0 +1,110 @@
+<!-- views/pages/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head.ejs %>
+    <link rel="stylesheet" href="/static/css/biography.css">
+</head>
+<body>
+<header class="app-bar paper4">
+    <% include ../partials/header.ejs %>
+</header>
+<main class="margin-top">
+    <div class="row first">
+        <div class="col-md-8 col-xs-10 col-md-offset-2 col-xs-offset-1">
+            <div class="well">
+                <div class="row">
+                    <div class="col-md-12 textCenter">
+                        <h1><%= course.code %>: <%= course.name %></h1>
+                        <h1>Seoul National University, <%= course.time %></h1>
+                    </div>
+                    <div class="col-md-12">
+                        <h2>Lectures:</h2>
+                    </div>
+                    <div class="col-md-12">
+                        <h3><%= course.teachingTime %></h3>
+                    </div>
+                    <div class="col-md-12">
+                        <h2>Lecturer:</h2>
+                    </div>
+                    <div class="col-md-12">
+                        <a href="mailto:<%= professor.email %>">
+                            <%= professor.name %>
+                        </a>
+                        (
+                        <%= professor.office %>
+                        , Tel: <%= professor.phone %>
+                        , Email:
+                        <a href="mailto:<%= professor.email %>">
+                            <%= professor.email %>
+                        </a>
+                        )
+                    </div>
+                    <div class="col-md-12">
+                        <h2>Teaching Assistants:</h2>
+                    </div>
+                    <div class="col-md-12">
+                        <% course.teachingAssistants.forEach((ta) => { %>
+                            <h3>
+                                <a href="mailto:<%= ta.email %>"><%= ta.name %></a>
+                                (<%= ta.address %>, Email)
+                                <a href="mailto:<%= ta.email %>"><%= ta.email %></a>
+                            </h3>
+                        <% }); %>
+                    </div>
+                    <div class="col-md-12">
+                        <h2>Textbook:</h2>
+                        <% if(course.textbook.length === 0){ %>
+                            No main textbook
+                        <% } %>
+                    </div>
+                    <div class="col-md-12">
+                        <% course.textbook.forEach((tb) => { %>
+                            <h3>Textbook: <%= tb.email %></h3>
+                        <% }); %>
+                    </div>
+                    <div class="col-md-12">
+                        <% if(course.preference.length > 0){ %>
+                            Preference
+                        <% } %>
+                    </div>
+                    <div class="col-md-12">
+                        <% course.preference.forEach((p) => { %>
+                            <h3><%= p %></h3>
+                        <% }); %>
+                    </div>
+
+                    <div class="col-md-12">
+                        Course Materials (Syllabus, Exam, Homework, and Solution):
+                    </div>
+                    <div class="col-md-12">
+                        <table class="table">
+                            <tbody>
+                                <% course.materials.forEach((m) => { %>
+                                    <tr>
+                                        <td>
+                                            <a href="<%= m.filePath %>" target="_blank"><%= m.name%></a>
+                                        </td>
+                                        <td>
+                                            <% if(m.hasOwnProperty('solutionPath') && m.solutionPath !== ''){ %>
+                                                <a href="<%= ma.solutionPath %>" target="_blank">Solution</a>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <% include ../partials/footer.ejs %>
+</footer>
+
+</body>
+</html>

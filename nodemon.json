@@ -4,6 +4,8 @@
   "ignore": [
     ".git",
     "./file",
+    "./views",
+    "./public",
     "./node_modules"
   ],
   "env": {

@@ -1,0 +1,21 @@
+<!-- views/pages/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <% include ../partials/left-side-bar.ejs %>
+        <main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
+            <div class="main-navbar sticky-top bg-white">
+                <% include ../partials/menu.ejs %>
+            </div>
+        </main>
+    </div>
+</div>
+<% include ../partials/scripts.ejs %>
+</body>
+</html>

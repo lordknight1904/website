@@ -1,0 +1,142 @@
+<!doctype html>
+<html class="no-js h-100" lang="en">
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+<body class="h-100">
+<div class="container-fluid">
+    <div class="row">
+        <% include ../partials/left-side-bar.ejs %>
+        <main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
+            <div class="main-navbar sticky-top bg-white">
+                <% include ../partials/menu.ejs %>
+            </div>
+            <div class="main-content-container container-fluid px-4">
+                <!-- Page Header -->
+                <div class="page-header row no-gutters py-4">
+                    <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+                        <h3 class="page-title">
+                            <%= edit ? 'Update paper' : 'Add New Paper' %>
+                        </h3>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-12 mb-4">
+                        <div class="card card-small mb-4">
+                            <div class="card-header border-bottom">
+                                <h6 class="m-0">Form Inputs</h6>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item p-3">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12">
+                                            <form action="/admin/paper/form" method="post"
+                                                  id="create-paper" enctype="multipart/form-data"
+                                                  onkeypress="return event.keyCode != 13;"
+                                                  onsubmit="return confirm('Are you sure you want to <%= edit ? 'update' : 'create'  %>?');">
+                                                <input type="text" class="form-control" name="id" value="<%= id %>"
+                                                       aria-hidden="true" hidden>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.name ? 'is-invalid' : '' %>"
+                                                               placeholder="Name" type="text"
+                                                               name="name" aria-label="Name" value="<%= name %>"
+                                                               aria-describedby="basic-addon1">
+                                                        <% if (error.name) { %>
+                                                        <div class="<%= error.name ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.name %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.submittedTo ? 'is-invalid' : '' %>"
+                                                               placeholder="Submit to" type="text"
+                                                               name="submittedTo" aria-label="Submit to"
+                                                               value="<%= submittedTo %>"
+                                                               aria-describedby="basic-addon1">
+                                                        <% if (error.submittedTo) { %>
+                                                        <div class="<%= error.submittedTo ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.submittedTo %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.authors ? 'is-invalid' : '' %>"
+                                                               placeholder="Authors" type="text" data-role="tagsinput"
+                                                               name="authors" aria-label="Author"
+                                                               value="<%= authors %>">
+                                                        <% if (error.authors) { %>
+                                                        <div class="<%= error.authors ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.authors %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-6">
+                                                        <div class="input-group mb-3">
+                                                            <div class="custom-file input-group">
+                                                                <input class="custom-file-input <%= error.pdf ? 'is-invalid' : '' %>"
+                                                                       accept="application/pdf" type="file"
+                                                                       name="pdf" id="file-input">
+                                                                <% if (error.pdf) { %>
+                                                                <div class="<%= error.pdf ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                                    <%= error.pdf %>
+                                                                </div>
+                                                                <% } %>
+                                                                <label class="custom-file-label"
+                                                                       for="file-input">Choose paper pdf</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <select id="inputState" class="form-control" name="type"
+                                                                id="type">
+                                                            <%
+                                                            const options = ["Choose...", "Journal", "Conference"];
+                                                            options.map((t, i) => {
+                                                                const selected = (type === t) ? "selected" : "";
+                                                            %>
+                                                            <option value="<%= options[i] %>" <%= selected %>><%= t %></option>
+                                                            <%
+                                                            })
+                                                            %>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <div class="custom-control custom-checkbox mb-1">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                   name="published"
+                                                                   id="formsCheckboxDefault" <%= published ? 'checked' : '' %>>
+                                                            <label class="custom-control-label"
+                                                                   for="formsCheckboxDefault">Published</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <button type="submit" form="create-paper"
+                                                                class="mb-2 btn btn-sm btn-primary mr-1">
+                                                            Done
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<% include ../partials/scripts.ejs %>
+</body>
+</html>

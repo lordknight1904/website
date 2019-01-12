@@ -1,0 +1,182 @@
+<!doctype html>
+<html class="no-js h-100" lang="en">
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+<body class="h-100">
+<div class="container-fluid">
+    <div class="row">
+        <% include ../partials/left-side-bar.ejs %>
+        <main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
+            <div class="main-navbar sticky-top bg-white">
+                <% include ../partials/menu.ejs %>
+            </div>
+            <div class="main-content-container container-fluid px-4">
+                <!-- Page Header -->
+                <div class="page-header row no-gutters py-4">
+                    <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+                        <h3 class="page-title">
+                            <%= edit ? 'Update people' : 'Add new people' %>
+                        </h3>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-12 mb-4">
+                        <div class="card card-small mb-4">
+                            <div class="card-header border-bottom">
+                                <h6 class="m-0">Form Inputs</h6>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item p-3">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12">
+                                            <form action="/admin/people/form" method="post"
+                                                  id="create-paper" enctype="multipart/form-data"
+                                                  onsubmit="return confirm('Are you sure you want to <%= edit ? 'update' : 'create'  %>?');">
+                                                <input type="text" class="form-control" name="id" value="<%= id %>"
+                                                       aria-hidden="true" hidden>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.name ? 'is-invalid' : '' %>"
+                                                               placeholder="Name" type="text"
+                                                               name="name" aria-label="Name" value="<%= name %>"
+                                                               aria-describedby="basic-addon1">
+                                                        <% if (error.name) { %>
+                                                        <div class="<%= error.name ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.name %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.email ? 'is-invalid' : '' %>"
+                                                               placeholder="Email" type="text"
+                                                               name="email" aria-label="Email" value="<%= email %>"
+                                                               aria-describedby="basic-addon1">
+                                                        <% if (error.email) { %>
+                                                        <div class="<%= error.email ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.email %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.field ? 'is-invalid' : '' %>"
+                                                               placeholder="Field" type="text"
+                                                               name="field" aria-label="Field" value="<%= field %>"
+                                                               aria-describedby="basic-addon1">
+                                                        <% if (error.field) { %>
+                                                        <div class="<%= error.field ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.field %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.title ? 'is-invalid' : '' %>"
+                                                               placeholder="Title" type="text"
+                                                               name="title" aria-label="Title"
+                                                               value="<%= title %>"
+                                                               aria-describedby="basic-addon1">
+                                                        <% if (error.title) { %>
+                                                        <div class="<%= error.title ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.title %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.occupation ? 'is-invalid' : '' %>"
+                                                               placeholder="Occupation" type="text"
+                                                               name="occupation" aria-label="Occupation"
+                                                               value="<%= occupation %>"
+                                                               aria-describedby="basic-addon1">
+                                                        <% if (error.occupation) { %>
+                                                        <div class="<%= error.occupation ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.occupation %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.address ? 'is-invalid' : '' %>"
+                                                               placeholder="Address" type="text"
+                                                               name="address" aria-label="Address"
+                                                               value="<%= address %>"
+                                                               aria-describedby="basic-addon1">
+                                                        <% if (error.address) { %>
+                                                        <div class="<%= error.address ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.address %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.profilePage ? 'is-invalid' : '' %>"
+                                                               placeholder="Profile page" type="text"
+                                                               name="profilePage" aria-label="Profile page"
+                                                               value="<%= profilePage %>"
+                                                               aria-describedby="basic-addon1">
+                                                        <% if (error.profilePage) { %>
+                                                        <div class="<%= error.profilePage ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.profilePage %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-6">
+                                                        <div class="input-group mb-3">
+                                                            <div class="custom-file input-group">
+                                                                <input class="custom-file-input <%= error.avatar ? 'is-invalid' : '' %>"
+                                                                       accept="image/x-png,image/gif,image/jpeg" type="file"
+                                                                       name="avatar" id="file-input">
+                                                                <% if (error.avatar) { %>
+                                                                <div class="<%= error.avatar ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                                    <%= error.avatar %>
+                                                                </div>
+                                                                <% } %>
+                                                                <label class="custom-file-label"
+                                                                       for="file-input">Select picture</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-4">
+                                                        <div class="custom-control custom-checkbox mb-1">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                   name="graduated"
+                                                                   id="formsCheckboxDefault" <%= graduated ? 'checked' : '' %>>
+                                                            <label class="custom-control-label"
+                                                                   for="formsCheckboxDefault">Graduated</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <button type="submit" form="create-paper"
+                                                                class="mb-2 btn btn-sm btn-primary mr-1">
+                                                            Done
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<% include ../partials/scripts.ejs %>
+</body>
+</html>

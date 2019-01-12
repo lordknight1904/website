@@ -55,6 +55,19 @@ classSchema.statics = {
   getAll(cb) {
     return this.find({}).sort('-dateCreated').exec(cb);
   },
+  getConferenceAndJournal(cb) {
+    let error = null;
+    let j, c = [];
+    this.find({ type: 'Journal', }).sort('-dateCreated').exec((err, journal) => {
+      if (!err) j = journal;
+      this.find({ type: '﻿Conference', }).sort('-dateCreated').exec((err, conference) => {
+        if (!err) {
+          c = conference;
+          cb(error, j, c)
+        }
+      });
+    });
+  },
   add(obj, cb) {
     return this.create(obj, cb);
   },
@@ -74,11 +87,11 @@ classSchema.statics = {
       }
     ).exec(cb);
   },
-  deactive(id, cb) {
-    return this.findOneAndUpdate({ _id: id }, { active: false }).exec(cb);
+  unpublish(id, cb) {
+    return this.findOneAndUpdate({ _id: id }, { published: false }).exec(cb);
   },
-  active(id, cb) {
-    return this.findOneAndUpdate({ _id: id }, { active: true }).exec(cb);
+  publish(id, cb) {
+    return this.findOneAndUpdate({ _id: id }, { published: true }).exec(cb);
   },
   delete(id, cb) {
     return this.findOneAndDelete({ _id: id }).exec(cb);

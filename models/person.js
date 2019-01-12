@@ -59,6 +59,22 @@ personSchema.statics = {
   getAll(cb) {
     return this.find({}).exec(cb);
   },
+  getNameAndId(cb) {
+    return this.find({}, 'name _id').exec(cb);
+  },
+  getPeopleAndAlumni(cb) {
+    let error = null;
+    let m, a = [];
+    this.find({ graduated: false, }).sort('-dateCreated').exec((err, members) => {
+      if (!err) m = members;
+      this.find({ graduated: true, }).sort('-dateCreated').exec((err, alumni) => {
+        if (!err) {
+          a = alumni;
+          cb(error, m, a)
+        }
+      });
+    });
+  },
   add(obj, cb) {
     return this.create(obj, cb);
   },
@@ -78,14 +94,17 @@ personSchema.statics = {
       }
     ).exec(cb);
   },
-  deactive(id, cb) {
-    return this.findOneAndUpdate({ _id: id }, { active: false }).exec(cb);
+  ungraduate(id, cb) {
+    return this.findOneAndUpdate({ _id: id }, { graduated: false }).exec(cb);
   },
-  active(id, cb) {
-    return this.findOneAndUpdate({ _id: id }, { active: true }).exec(cb);
+  graduate(id, cb) {
+    return this.findOneAndUpdate({ _id: id }, { graduated: true }).exec(cb);
   },
   delete(id, cb) {
     return this.findOneAndDelete({ _id: id }).exec(cb);
+  },
+  update(id, cb) {
+    return this.update({}, {}, { multi: true }).exec(cb);
   },
 };
 

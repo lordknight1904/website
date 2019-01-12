@@ -76,8 +76,11 @@ const courseSchema = new Schema({
 courseSchema.plugin(uniqueValidator, { message: 'This {PATH} has been taken.' });
 
 courseSchema.statics = {
-  get(alias, cb) {
+  getAlias(alias, cb) {
     return this.findOne({ alias }).populate('teachingAssistants', 'name email address').exec(cb);
+  },
+  get(id, cb) {
+    return this.findOne({ _id: id }).populate('teachingAssistants', 'name email address').exec(cb);
   },
   getAll(cb) {
     return this.find({}).sort('-dateCreated').exec(cb);
@@ -101,10 +104,10 @@ courseSchema.statics = {
       }
     ).exec(cb);
   },
-  deactive(id, cb) {
+  lock(id, cb) {
     return this.findOneAndUpdate({ _id: id }, { active: false }).exec(cb);
   },
-  active(id, cb) {
+  open(id, cb) {
     return this.findOneAndUpdate({ _id: id }, { active: true }).exec(cb);
   },
   delete(id, cb) {
