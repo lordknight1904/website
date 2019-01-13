@@ -148,6 +148,7 @@ app.get('/admin/course/form', (req, res) => {
         name: '',
         time: '',
         teachingAssistants: '',
+        materials: [],
         preference: '',
         textbook: '',
         people,
@@ -157,7 +158,7 @@ app.get('/admin/course/form', (req, res) => {
     }
   });
 });
-app.post('/admin/course/form', upload.single('pdf'), (req, res) => {
+app.post('/admin/course/form', upload.array('materials'), (req, res) => {
   People.getNameAndId((err, people) => {
     if (err) {
       res.redirect('/admin/course');
@@ -171,16 +172,17 @@ app.post('/admin/course/form', upload.single('pdf'), (req, res) => {
         preference: '',
         textbook: '',
       };
-      (reqCourse.code === '') ? error.code = 'Input code': '';
-      (reqCourse.name === '') ? error.name = 'Input name': '';
-      (reqCourse.time === '') ? error.time = 'Input time': '';
-      if (!req.file) {
+      (reqCourse.code === '') ? error.code = 'Input code' : '';
+      (reqCourse.name === '') ? error.name = 'Input name' : '';
+      (reqCourse.time === '') ? error.time = 'Input time' : '';
+      if (!req.files) {
         res.render('admin/pages/course-form', {
           edit: false,
           active: reqCourse.active === 'on',
           code: reqCourse.code,
           name: reqCourse.name,
           time: reqCourse.time,
+          materials: [],
           teachingAssistants: reqCourse.teachingAssistants,
           preference: reqCourse.preference,
           textbook: reqCourse.textbook,
@@ -190,7 +192,15 @@ app.post('/admin/course/form', upload.single('pdf'), (req, res) => {
         });
         return;
       }
-      const pdfPath = `http://islab.snu.ac.kr/file/${req.file.originalname.toLowerCase().replace(/ /g, '')}.pdf`;
+      let materials = [];
+      // const pdfPath = `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().replace(/ /g, '')}.pdf`;
+      for (let i = 0; i < reqCourse.materialname.length; i++) {
+        materials.push({
+          name: reqCourse.materialname[i],
+          filePath: reqCourse.materialfile[i] ? `http://islab.snu.ac.kr/upload/${reqCourse.materialfile[i].toLowerCase().replace(/ /g, '')}.pdf` : '',
+          solutionPath: reqCourse.materialsolution[i] ? `http://islab.snu.ac.kr/upload/${reqCourse.materialsolution[i].toLowerCase().replace(/ /g, '')}.pdf` : '',
+        });
+      }
       const course = new Course({
         active: reqCourse.active === 'on',
         code: reqCourse.code,
@@ -199,7 +209,7 @@ app.post('/admin/course/form', upload.single('pdf'), (req, res) => {
         teachingAssistants: reqCourse.teachingAssistants.split(','),
         preference: reqCourse.preference.split(','),
         textbook: reqCourse.textbook.split(','),
-        pdfPath,
+        materials,
       });
       if (reqCourse.id) {
         let { id, ...rest } = reqCourse;
@@ -214,6 +224,7 @@ app.post('/admin/course/form', upload.single('pdf'), (req, res) => {
               code: reqCourse.code,
               name: reqCourse.name,
               time: reqCourse.time,
+              materials: course.materials,
               teachingAssistants: reqCourse.teachingAssistants,
               preference: reqCourse.preference,
               textbook: reqCourse.textbook,
@@ -234,6 +245,7 @@ app.post('/admin/course/form', upload.single('pdf'), (req, res) => {
               code: reqCourse.code,
               name: reqCourse.name,
               time: reqCourse.time,
+              materials: [],
               teachingAssistants: reqCourse.teachingAssistants,
               preference: reqCourse.preference,
               textbook: reqCourse.textbook,
@@ -265,6 +277,7 @@ app.get('/admin/course/:id', (req, res) => {
           code: course.code,
           name: course.name,
           time: course.time,
+          materials: course.materials,
           preference: course.preference.join(','),
           textbook: course.textbook.join(','),
           teachingAssistants: ret.join(','),
@@ -348,10 +361,10 @@ app.post('/admin/paper/form', upload.single('pdf'), (req, res) => {
     submittedTo: '',
     name: '',
   };
-  (reqPaper.type === '') ? error.code = 'Select type': '';
-  (reqPaper.name === '') ? error.name = 'Input name': '';
-  (reqPaper.authors === '') ? error.time = 'Input authors': '';
-  (reqPaper.submittedTo === '') ? error.time = 'Input submit date': '';
+  (reqPaper.type === '') ? error.code = 'Select type' : '';
+  (reqPaper.name === '') ? error.name = 'Input name' : '';
+  (reqPaper.authors === '') ? error.time = 'Input authors' : '';
+  (reqPaper.submittedTo === '') ? error.time = 'Input submit date' : '';
   if (!req.file) {
     res.render('admin/pages/paper-form', {
       edit: false,
@@ -365,7 +378,7 @@ app.post('/admin/paper/form', upload.single('pdf'), (req, res) => {
     });
     return;
   }
-  const pdfPath = `http://islab.snu.ac.kr/file/${req.file.originalname.toLowerCase().replace(/ /g, '')}.pdf`;
+  const pdfPath = `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().replace(/ /g, '')}.pdf`;
   const paper = new Paper({
     published: reqPaper.active === 'on',
     type: reqPaper.type,
@@ -503,7 +516,7 @@ app.post('/admin/people/form', upload.single('avatar'), (req, res) => {
     });
     return;
   }
-  const pdfPath = `http://islab.snu.ac.kr/file/${req.file.originalname.toLowerCase().replace(/ /g, '')}.pdf`;
+  const pdfPath = `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().replace(/ /g, '')}.pdf`;
   const people = new People({
     graduated: reqPaper.graduated === 'on',
     type: reqPaper.type,

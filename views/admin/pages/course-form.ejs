@@ -5,9 +5,8 @@
 </head>
 <% const temp = teachingAssistants.split(','); %>
 <% const selectedTA = people.filter(p => temp.includes(p._id.toString())); %>
-<% console.log(temp) %>
-<% console.log(selectedTA) %>
-<body class="h-100" onload="addTags(<%= JSON.stringify(selectedTA) %>);">
+<% const selectedMaterial = materials.map(obj => {return obj.name;}) %>
+<body class="h-100" onload="addTags(<%= JSON.stringify(selectedTA) %>);addMaterial(<%= JSON.stringify(selectedMaterial) %>)">
 <div class="container-fluid">
     <div class="row">
         <% include ../partials/left-side-bar.ejs %>
@@ -39,7 +38,7 @@
                                             <form action="/admin/course/form" method="post"
                                                   id="create-course" enctype="multipart/form-data"
                                                   onkeypress="return event.keyCode != 13;"
-                                                  onsubmit="return confirm('Are you sure you want to <%= edit ? 'update' : 'create' %>?');">
+                                                  onsubmit="return confirm('Are you sure you want to <%= edit ? 'update' : 'create'  %>?');">
                                                 <input type="text" class="form-control" name="id" value="<%= id %>"
                                                        aria-hidden="true" hidden>
                                                 <div class="form-group">
@@ -137,22 +136,27 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
-                                                    <div class="form-group col-md-8">
-                                                        <div class="input-group mb-3">
-                                                            <div class="custom-file input-group">
-                                                                <input class="custom-file-input <%= error.pdf ? 'is-invalid' : '' %>"
-                                                                       accept="application/pdf" type="file"
-                                                                       name="pdf" id="file-input">
-                                                                <% if (error.pdf) { %>
-                                                                <div class="<%= error.pdf ? 'invalid-feedback' : 'valid-feedback' %>">
-                                                                    <%= error.pdf %>
-                                                                </div>
-                                                                <% } %>
-                                                                <label class="custom-file-label"
-                                                                       for="file-input">Choose pdf</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <table class="table mb-0" id="material-table">
+                                                        <thead class="bg-light">
+                                                        <tr>
+                                                            <th scope="col" class="border-0">Name</th>
+                                                            <th scope="col" class="border-0">Material</th>
+                                                            <th scope="col" class="border-0">Solution</th>
+                                                            <th scope="col" class="border-0">
+                                                                <button type="button"
+                                                                        onclick="addMaterialTableRow()"
+                                                                        class="mb-2 btn custom-btn-sm btn-sm btn-success mr-1 edit-button float-right">
+                                                                    <i class="material-icons">add</i>
+                                                                </button>
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                                <div class="form-row">
                                                     <div class="form-group col-md-2">
                                                         <div class="custom-control custom-checkbox mb-1">
                                                             <input type="checkbox" class="custom-control-input"

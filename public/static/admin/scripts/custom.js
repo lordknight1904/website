@@ -11,10 +11,6 @@ $(function () {
 
 });
 
-$('#file-input').change(function () {
-  const file = $('#file-input')[0].files[0].name;
-  $(this).next('label').text(file);
-});
 // bootstrap-tagsinput.js file - add in local
 
 (function ($) {
@@ -696,7 +692,7 @@ $('#teachingAssistants')
     itemValue: function (item) {
       return item._id;
     },
-    itemText: function(item) {
+    itemText: function (item) {
       return item.name;
     }
   })
@@ -704,6 +700,7 @@ $('#teachingAssistants')
     console.log('here');
     event.cancel = true;
   });
+
 function taOnChange(event, people) {
   const result = people.filter(obj => {
     return obj._id === event.value;
@@ -711,9 +708,131 @@ function taOnChange(event, people) {
   $('#teachingAssistants').tagsinput('add', result[0]);
   event.value = -1;
 }
+
 function addTags(tags) {
-  console.log('adding');
   tags.map(t => {
     $('#teachingAssistants').tagsinput('add', t);
   });
+}
+
+function addMaterial(arr) {
+}
+// ADD A NEW ROW TO THE TABLE.s
+function addMaterialTableRow() {
+  const empTab = document.getElementById('material-table');
+
+  const rowCnt = empTab.rows.length;        // GET TABLE ROW COUNT.
+  let tr = empTab.insertRow(rowCnt);      // TABLE ROW.
+  tr = empTab.insertRow(rowCnt);
+
+  let td1 = document.createElement('td');          
+  td1 = tr.insertCell(0);
+  let td2 = document.createElement('td');
+  td2 = tr.insertCell(1);
+  let td3 = document.createElement('td');
+  td3 = tr.insertCell(2);
+  let td4 = document.createElement('td');
+  td4 = tr.insertCell(3);
+
+  td4.style.paddingTop = 0;
+
+  const div1 = document.createElement('div');
+  div1.setAttribute('class', 'input-group mb-3');
+  const input1 = document.createElement('input');
+  input1.setAttribute('class', 'form-control');
+  input1.setAttribute('type', 'text');
+  input1.setAttribute('aria-label', 'Material name');
+  input1.setAttribute('placeholder', 'Material name');
+  input1.setAttribute('data-role', 'tagsinput');
+  input1.setAttribute('name', 'materialname');
+  div1.appendChild(input1);
+
+  const div2 = document.createElement('div');
+  div2.setAttribute('class', 'input-group mb-3');
+  const div2inner = document.createElement('div');
+  div2inner.setAttribute('class', 'custom-file input-group');
+  const input2 = document.createElement('input');
+  input2.setAttribute('class', 'custom-file-input');
+  input2.setAttribute('type', 'file');
+  input2.setAttribute('accept', 'application/pdf');
+  input2.setAttribute('name', 'materials');
+  input2.setAttribute('id', 'file-input-' + rowCnt);
+  input2.setAttribute('onchange', 'fileInput(this)');
+  const input2hidden = document.createElement('input');
+  input2hidden.setAttribute('type', 'hidden');
+  input2hidden.setAttribute('name', 'materialfile');
+  input2hidden.setAttribute('id', 'file-input-hidden-' + rowCnt);
+  const label2 = document.createElement('label');
+  label2.setAttribute('class', 'custom-file-label');
+  label2.setAttribute('for', 'file-input-' + rowCnt);
+  label2.innerText = 'Choose materials';
+  div2.appendChild(div2inner);
+  div2inner.appendChild(input2);
+  div2inner.appendChild(input2hidden);
+  div2inner.appendChild(label2);
+
+  const div3 = document.createElement('div');
+  div3.setAttribute('class', 'input-group mb-3');
+  const div3inner = document.createElement('div');
+  div3inner.setAttribute('class', 'custom-file input-group');
+  const input3 = document.createElement('input');
+  input3.setAttribute('class', 'custom-file-input');
+  input3.setAttribute('type', 'file');
+  input3.setAttribute('accept', 'application/pdf');
+  input3.setAttribute('name', 'materials');
+  input3.setAttribute('id', 'file-input-' + rowCnt);
+  input3.setAttribute('onchange', 'fileInput(this)');
+  const input3hidden = document.createElement('input');
+  input3hidden.setAttribute('type', 'hidden');
+  input3hidden.setAttribute('name', 'materialsolution');
+  input3hidden.setAttribute('id', 'file-input-hidden-' + rowCnt);
+  const label3 = document.createElement('label');
+  label3.setAttribute('class', 'custom-file-label');
+  label3.setAttribute('for', 'file-input-' + rowCnt);
+  label3.innerText = 'Choose solution';
+  div3.appendChild(div3inner);
+  div3inner.appendChild(input3);
+  div3inner.appendChild(input3hidden);
+  div3inner.appendChild(label3);
+
+  const button = document.createElement('button');
+  button.setAttribute('class', 'mb-2 btn custom-btn-sm btn-sm btn-danger mr-1 delete-button');
+  button.setAttribute('type', 'button');
+  const buttoninner = document.createElement('i');
+  buttoninner.setAttribute('class', 'material-icons');
+  buttoninner.innerText = 'delete';
+  button.appendChild(buttoninner);
+  button.setAttribute('onclick', 'removeRow(this)');
+
+  td1.appendChild(div1);
+  td2.appendChild(div2);
+  td3.appendChild(div3);
+  td4.appendChild(button);
+    
+}
+
+// DELETE TABLE ROW.
+function removeRow(oButton) {
+  const empTab = document.getElementById('material-table');
+  empTab.deleteRow(oButton.parentNode.parentNode.rowIndex);       // BUTTON -> TD -> TR.
+}
+function fileInput(input) {
+  input.parentElement.getElementsByTagName("label")[0].innerText = input.files[0].name;
+  const inputs = input.parentElement.getElementsByTagName("input");
+  for (let i = 0; i < inputs.length ;i++) {
+    if (inputs[i].getAttribute('type') === 'hidden') {
+      inputs[i].value = input.files[0].name
+    }
+  }
+}
+
+function courseSubmit(form) {
+  // console.log(event);
+  for (let i = 0; i < form.length ;i++) {
+    console.log(form.elements[i].name);
+    console.log(form.elements[i].value);
+    console.log('-------');
+  }
+  // return false;
+  return confirm('Are you sure you want to submit form');
 }
