@@ -1,0 +1,74 @@
+<!-- views/pages/index.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
+            <div class="main-content-container container-fluid px-4">
+                <div class="row">
+                    <div class="col-lg-12 mb-4">
+                        <div class="card card-small mb-4">
+                            <div class="card-header border-bottom">
+                                <h6 class="m-0">Login</h6>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item p-3">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12">
+                                            <form action="/admin" method="post"
+                                                  id="login"
+                                            >
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <% if (error) { %>
+                                                        <div>
+                                                            <%= error %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control" autocomplete="off"
+                                                               placeholder="Id" type="text"
+                                                               name="id" aria-label="Id"
+                                                               aria-describedby="basic-addon1">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control"
+                                                               placeholder="Password" type="password"
+                                                               name="password" aria-label="Password"
+                                                               autocomplete="off"
+                                                               aria-describedby="basic-addon1">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <button type="submit" form="login"
+                                                                class="mb-2 btn btn-sm btn-primary mr-1">
+                                                            Login
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<% include ../partials/scripts.ejs %>
+</body>
+</html>

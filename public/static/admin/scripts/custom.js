@@ -825,14 +825,3 @@ function fileInput(input) {
     }
   }
 }
-
-function courseSubmit(form) {
-  // console.log(event);
-  for (let i = 0; i < form.length ;i++) {
-    console.log(form.elements[i].name);
-    console.log(form.elements[i].value);
-    console.log('-------');
-  }
-  // return false;
-  return confirm('Are you sure you want to submit form');
-}

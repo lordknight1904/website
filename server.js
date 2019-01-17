@@ -2,8 +2,10 @@ import config from './config';
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import professorData from './professor';
+import accounts from './accounts';
 import path from 'path';
 import methodOverride from 'method-override';
 import fs from 'fs';
@@ -44,6 +46,7 @@ import People from './models/person';
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.use(cookieParser());
 app.use(bodyParser.json({ limit: '20mb' }));
 app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
 app.use(bodyParser.json());
@@ -56,6 +59,29 @@ app.use(methodOverride('_method'));
 // app.use('/course', express.static(__dirname + '/data/pdf'));
 app.use('/upload', express.static(__dirname + '/public/upload'));
 app.use(express.static("public"));
+app.use((req, res, next) => {
+  if (req.originalUrl.indexOf('/admin') === 0) {
+    if (req.originalUrl === '/admin') {
+      next();
+    } else {
+      let flag = false;
+      if (req.cookies.id) {
+        accounts.map(obj => {
+          if (obj.id === req.cookies.id) {
+            flag = true;
+          }
+        });
+      }
+      if (flag) {
+        next();
+      } else {
+        res.redirect('/admin');
+      }
+    }
+  } else {
+    next();
+  }
+});
 
 mongoose.connect(config.mongoURL, { useNewUrlParser: true }, (error) => {
   if (error) {
@@ -124,7 +150,27 @@ app.get('/people', (req, res) => {
 });
 
 app.get('/admin', (req, res) => {
-  res.render('admin/pages/index');
+  res.render('admin/pages/login', { error: '' });
+});
+
+app.post('/admin', (req, res) => {
+  const credential = req.body;
+  let flag = false;
+  accounts.map((obj) => {
+    if (obj.id === credential.id && obj.password === credential.password) {
+      flag = true;
+      res.cookie('id', obj.id);
+    }
+  });
+  if (flag) {
+    res.redirect('/admin/course');
+  } else {
+    res.render('admin/pages/login', { error: 'login fail' });
+  }
+});
+app.get('/logout', (req, res) => {
+  res.clearCookie('id');
+  res.redirect('/admin');
 });
 
 // listing
