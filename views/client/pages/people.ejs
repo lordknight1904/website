@@ -37,7 +37,11 @@
                                         <%= m.name %>
                                     </a>
                                     <% }%>
-                                    <div>[<%= m.field %>]</div>
+                                    <div>
+                                        <% if (m.field) { %>
+                                            [<%= m.field %>]
+                                        <% } %>
+                                    </div>
                                 </td>
                             </tr>
                             <% }); %>

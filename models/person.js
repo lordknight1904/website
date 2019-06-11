@@ -65,9 +65,9 @@ personSchema.statics = {
   getPeopleAndAlumni(cb) {
     let error = null;
     let m, a = [];
-    this.find({ graduated: false, }).sort('-dateCreated').exec((err, members) => {
+    this.find({ graduated: false, }).sort('dateCreated').exec((err, members) => {
       if (!err) m = members;
-      this.find({ graduated: true, }).sort('-dateCreated').exec((err, alumni) => {
+      this.find({ graduated: true, }).sort('dateCreated').exec((err, alumni) => {
         if (!err) {
           a = alumni;
           cb(error, m, a)

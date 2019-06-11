@@ -6,7 +6,7 @@ import uniqueValidator from 'mongoose-unique-validator';
 const Schema = mongoose.Schema;
 
 const classSchema = new Schema({
-  published: { type: 'String', default: '0' },
+  published: { type: Boolean, default: '0' },
   type: {
     type: 'String',
     trim: true,
@@ -50,17 +50,17 @@ classSchema.statics = {
     return this.findById({ _id: id }).exec(cb);
   },
   getPaperType(type, cb) {
-    return this.find({ type }).sort('-dateCreated').exec(cb);
+    return this.find({ type }).sort('dateCreated').exec(cb);
   },
   getAll(cb) {
-    return this.find({}).sort('-dateCreated').exec(cb);
+    return this.find({}).sort('dateCreated').exec(cb);
   },
   getConferenceAndJournal(cb) {
     let error = null;
     let j, c = [];
-    this.find({ type: 'Journal', }).sort('-dateCreated').exec((err, journal) => {
+    this.find({ type: 'Journal', }).sort('published -dateCreated').exec((err, journal) => {
       if (!err) j = journal;
-      this.find({ type: '﻿Conference', }).sort('-dateCreated').exec((err, conference) => {
+      this.find({ type: '﻿Conference', }).sort('published -dateCreated').exec((err, conference) => {
         if (!err) {
           c = conference;
           cb(error, j, c)

@@ -55,12 +55,26 @@
                                                     <div class="input-group mb-3">
                                                         <input class="form-control <%= error.submittedTo ? 'is-invalid' : '' %>"
                                                                placeholder="Submit to" type="text"
-                                                               name="submittedTo" aria-label="Submit to"
+                                                               name="submittedTo" aria-label="Detail"
                                                                value="<%= submittedTo %>"
                                                                aria-describedby="basic-addon1">
                                                         <% if (error.submittedTo) { %>
                                                         <div class="<%= error.submittedTo ? 'invalid-feedback' : 'valid-feedback' %>">
                                                             <%= error.submittedTo %>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="input-group mb-3">
+                                                        <input class="form-control <%= error.detail ? 'is-invalid' : '' %>"
+                                                               placeholder="Publish detail" type="text"
+                                                               name="detail" aria-label="Publish detail"
+                                                               value="<%= detail %>"
+                                                               aria-describedby="basic-addon1">
+                                                        <% if (error.detail) { %>
+                                                        <div class="<%= error.detail ? 'invalid-feedback' : 'valid-feedback' %>">
+                                                            <%= error.detail %>
                                                         </div>
                                                         <% } %>
                                                     </div>

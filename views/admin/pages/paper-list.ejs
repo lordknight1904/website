@@ -81,7 +81,7 @@
                                                     class="mb-2 btn custom-btn-sm btn-sm btn-danger mr-1 delete-button">
                                                 <i class="material-icons">delete</i>
                                             </button>
-                                            <% if(c.published === 'true'){ %>
+                                            <% if(c.published){ %>
                                             <button type="submit" form="unpublish-course-<%= c._id %>"
                                                     class="mb-2 btn custom-btn-sm btn-sm btn-secondary mr-1">
                                                 <i class="material-icons">lock</i>
@@ -163,7 +163,7 @@
                                                     class="mb-2 btn custom-btn-sm btn-sm btn-danger mr-1 delete-button">
                                                 <i class="material-icons">delete</i>
                                             </button>
-                                            <% if(j.published === 'true'){ %>
+                                            <% if(j.published){ %>
                                             <button type="submit" form="unpublish-course-<%= j._id %>"
                                                     class="mb-2 btn custom-btn-sm btn-sm btn-secondary mr-1">
                                                 <i class="material-icons">lock</i>

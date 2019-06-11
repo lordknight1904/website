@@ -18,7 +18,7 @@
                     <div class="col-md-12">
                         <h1>Publication</h1>
                         <p>
-                            Personal use of this material is mermitted. However, permission to reprint/republish
+                            Personal use of this material is permitted. However, permission to reprint/republish
                             this material for advertising or promotion purposes or for creating new collective works for
                             resale or redistribution to servers or lists, or to reuse any copyrighted component of this
                             work in other works, must be obtained from the copyright holder.
@@ -32,65 +32,89 @@
                         <div class="tab-content">
                             <div id="home" class="tab-pane fade in active">
                                 <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <td>Authors</td>
-                                            <td>Title</td>
-                                            <td></td>
-                                        </tr>
-                                    </thead>
+                                    <!--<thead>-->
+                                    <!--<tr>-->
+                                    <!--<td></td>-->
+                                    <!--<td>Authors</td>-->
+                                    <!--<td>Title</td>-->
+                                    <!--<td></td>-->
+                                    <!--</tr>-->
+                                    <!--</thead>-->
                                     <tbody>
-                                        <% journal.forEach((j) => { %>
+                                    <% journal.forEach((j, i) => { %>
                                         <tr>
-                                            <td>
-                                                <%= j.authors.slice(0, -1).join(', ') + ' and ' + j.authors.slice(-1) %>
+                                            <td style="border-bottom: 1px solid #ddd; border-top: none">
+                                                <%= journal.length - i %>
                                             </td>
-                                            <td>
+                                            <td style="border-bottom: 1px solid #ddd; border-top: none">
+                                                <%= j.authors.slice(0, -1).join(', ') + ' and ' + j.authors.slice(-1) + ',' %>
+                                                <!--</td>-->
+                                                <!--<td>-->
                                                 <% if (j.pdfPath) { %>
-                                                <a href="<%= j.pdfPath %>" target="_blank">
-                                                    <%= j.name %>
-                                                </a>
+                                                    <a href="<%= j.pdfPath %>" target="_blank">
+                                                        "<%= j.name.trim() %>,"
+                                                    </a>
                                                 <% } else { %>
-                                                <%= j.name %>
+                                                    "<%= j.name.trim() %>,"
+                                                <% } %>
+                                                <!--</td>-->
+                                                <!--<td>-->
+                                                <% if (j.detail !== '') { %>
+                                                    <i><%= j.submittedTo %></i>, <%= j.detail %>
+                                                <% } else if (j.published) { %>
+                                                    to appear in <i><%= j.submittedTo %></i>
+                                                <% } else { %>
+                                                    submitted to <i><%= j.submittedTo %></i>
                                                 <% } %>
                                             </td>
-                                            <td>
-                                                <%= j.submittedTo %>
-                                            </td>
                                         </tr>
-                                        <% }); %>
+                                    <% }); %>
                                     </tbody>
                                 </table>
                             </div>
                             <div id="menu1" class="tab-pane fade">
                                 <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <td>Authors</td>
-                                        <td>Title</td>
-                                        <td></td>
-                                    </tr>
-                                    </thead>
+                                    <!--<thead>-->
+                                    <!--<tr>-->
+                                    <!--<td></td>-->
+                                    <!--<td>Authors</td>-->
+                                    <!--<td>Title</td>-->
+                                    <!--<td></td>-->
+                                    <!--</tr>-->
+                                    <!--</thead>-->
                                     <tbody>
-                                        <% conference.forEach((c) => { %>
+                                    <% conference.forEach((c, i) => { %>
                                         <tr>
-                                            <td>
-                                                <%= c.authors.slice(0, -1).join(', ') + ' and ' + c.authors.slice(-1) %>
+                                            <td style="border-bottom: 1px solid #ddd; border-top: none">
+                                                <%= conference.length - i %>
                                             </td>
-                                            <td>
+                                            <td style="border-bottom: 1px solid #ddd; border-top: none">
+                                                <%= c.authors.slice(0, -1).join(', ') + ' and ' + c.authors.slice(-1) + ',' %>
+                                                <!--</td>-->
+                                                <!--<td>-->
                                                 <% if (c.pdfPath) { %>
-                                                <a href="<%= c.pdfPath %>" target="_blank">
-                                                    <%= c.name %>
-                                                </a>
+                                                    <a href="<%= c.pdfPath %>" target="_blank">
+                                                        "<%= c.name %>,"
+                                                    </a>
                                                 <% } else { %>
-                                                <%= c.name %>
+                                                    "<%= c.name %>,"
+                                                <% } %>
+                                                <!--</td>-->
+                                                <!--<td>-->
+                                                <% if (c.published) { %>
+                                                    <% if (c.submittedTo.includes("Proc.")) {%>
+                                                        in
+                                                    <% } %>
+                                                    <i><%= c.submittedTo %></i>, <%= c.detail %>
+                                                <% } else { %>
+                                                    <% if (c.submittedTo.includes("Proc.")) {%>
+                                                        in
+                                                    <% } %>
+                                                    <i><%= c.submittedTo %></i>
                                                 <% } %>
                                             </td>
-                                            <td>
-                                                <%= c.submittedTo %>
-                                            </td>
                                         </tr>
-                                        <% }); %>
+                                    <% }); %>
                                     </tbody>
                                 </table>
                             </div>

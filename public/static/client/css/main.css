@@ -68,3 +68,16 @@ h3 {
     margin-left: 0;
     margin-right: 0;
 }
+.biographyImg {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    margin: 0;
+}
+.biographyImg img {
+    display: block;
+    top: 50%;
+    left: 50%;
+    height: auto;
+    min-width: 100%;
+}

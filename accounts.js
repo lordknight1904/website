@@ -1,7 +1,7 @@
 const accounts = [
   {
     id: 'admin',
-    password: 'kimsangtae',
+    password: 'islab0821',
   }
 ];
 

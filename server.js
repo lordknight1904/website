@@ -13,9 +13,9 @@ import multer from 'multer';
 
 const upload = multer({
   storage: multer.diskStorage({
-    destination: 'public/upload/',
+    destination: __dirname + '/public/upload/',
     filename: (req, file, callback) => {
-      callback(null, file.originalname.toLowerCase().replace(/ /g, ''));
+      callback(null, file.originalname.toLowerCase().trim().replace(/[^a-zA-Z0-9.]/g, "").replace(/ /g, ''));
     }
   })
 });
@@ -47,8 +47,8 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(cookieParser());
-app.use(bodyParser.json({ limit: '20mb' }));
-app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
+app.use(bodyParser.json({limit: '20mb'}));
+app.use(bodyParser.urlencoded({limit: '20mb', extended: true}));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(methodOverride('_method'));
@@ -58,7 +58,8 @@ app.use(methodOverride('_method'));
 // app.use('/pdf', express.static(__dirname + '/public/pdf'));
 // app.use('/course', express.static(__dirname + '/data/pdf'));
 app.use('/upload', express.static(__dirname + '/public/upload'));
-app.use(express.static("public"));
+app.use('/static', express.static(__dirname + '/public/static'));
+// app.use(express.static("public"));
 app.use((req, res, next) => {
   if (req.originalUrl.indexOf('/admin') === 0) {
     if (req.originalUrl === '/admin') {
@@ -83,7 +84,7 @@ app.use((req, res, next) => {
   }
 });
 
-mongoose.connect(config.mongoURL, { useNewUrlParser: true }, (error) => {
+mongoose.connect(config.mongoURL, {useNewUrlParser: true}, (error) => {
   if (error) {
     console.error('Please make sure Mongodb is installed and running!'); // eslint-disable-line no-console
     throw error;
@@ -150,7 +151,7 @@ app.get('/people', (req, res) => {
 });
 
 app.get('/admin', (req, res) => {
-  res.render('admin/pages/login', { error: '' });
+  res.render('admin/pages/login', {error: ''});
 });
 
 app.post('/admin', (req, res) => {
@@ -165,7 +166,7 @@ app.post('/admin', (req, res) => {
   if (flag) {
     res.redirect('/admin/course');
   } else {
-    res.render('admin/pages/login', { error: 'login fail' });
+    res.render('admin/pages/login', {error: 'login fail'});
   }
 });
 app.get('/logout', (req, res) => {
@@ -221,30 +222,29 @@ app.post('/admin/course/form', upload.array('materials'), (req, res) => {
       (reqCourse.code === '') ? error.code = 'Input code' : '';
       (reqCourse.name === '') ? error.name = 'Input name' : '';
       (reqCourse.time === '') ? error.time = 'Input time' : '';
-      if (!req.files) {
-        res.render('admin/pages/course-form', {
-          edit: false,
-          active: reqCourse.active === 'on',
-          code: reqCourse.code,
-          name: reqCourse.name,
-          time: reqCourse.time,
-          materials: [],
-          teachingAssistants: reqCourse.teachingAssistants,
-          preference: reqCourse.preference,
-          textbook: reqCourse.textbook,
-          people,
-          id: reqCourse.id ? reqCourse.id : '',
-          error,
-        });
-        return;
-      }
+      // if (!req.files) {
+      //   res.render('admin/pages/course-form', {
+      //     edit: false,
+      //     active: reqCourse.active === 'on',
+      //     code: reqCourse.code,
+      //     name: reqCourse.name,
+      //     time: reqCourse.time,
+      //     materials: [],
+      //     teachingAssistants: reqCourse.teachingAssistants,
+      //     preference: reqCourse.preference,
+      //     textbook: reqCourse.textbook,
+      //     people,
+      //     id: reqCourse.id ? reqCourse.id : '',
+      //     error,
+      //   });
+      //   return;
+      // }
       let materials = [];
-      // const pdfPath = `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().replace(/ /g, '')}.pdf`;
       for (let i = 0; i < reqCourse.materialname.length; i++) {
         materials.push({
           name: reqCourse.materialname[i],
-          filePath: reqCourse.materialfile[i] ? `http://islab.snu.ac.kr/upload/${reqCourse.materialfile[i].toLowerCase().replace(/ /g, '')}.pdf` : '',
-          solutionPath: reqCourse.materialsolution[i] ? `http://islab.snu.ac.kr/upload/${reqCourse.materialsolution[i].toLowerCase().replace(/ /g, '')}.pdf` : '',
+          filePath: reqCourse.materialfile[i] ? `http://islab.snu.ac.kr/upload/${reqCourse.materialfile[i].toLowerCase().replace(/ /g, '')}` : '',
+          solutionPath: reqCourse.materialsolution[i] ? `http://islab.snu.ac.kr/upload/${reqCourse.materialsolution[i].toLowerCase().replace(/ /g, '')}` : '',
         });
       }
       const course = new Course({
@@ -258,7 +258,7 @@ app.post('/admin/course/form', upload.array('materials'), (req, res) => {
         materials,
       });
       if (reqCourse.id) {
-        let { id, ...rest } = reqCourse;
+        let {id, ...rest} = reqCourse;
         rest.active = reqCourse.active === 'on';
         rest.teachingAssistants = reqCourse.teachingAssistants.split(',');
         Course.put(id, rest, (err) => {
@@ -367,6 +367,7 @@ app.get('/admin/paper/form/:type', (req, res) => {
     authors: [],
     type: req.params.type.charAt(0).toUpperCase() + req.params.type.substr(1).toLowerCase(),
     submittedTo: '',
+    detail: '',
     name: '',
     id: '',
     error: {},
@@ -379,6 +380,7 @@ app.get('/admin/paper/form', (req, res) => {
     authors: [],
     type: 'Choose...',
     submittedTo: '',
+    detail: '',
     name: '',
     id: '',
     error: {},
@@ -392,7 +394,8 @@ app.get('/admin/paper/:id', (req, res) => {
       type: course.type,
       name: course.name,
       submittedTo: course.submittedTo,
-      authors: course.authors.join(','),
+      detail: course.detail,
+      authors: course.authors,
       id: course._id,
       error: {},
     });
@@ -405,37 +408,44 @@ app.post('/admin/paper/form', upload.single('pdf'), (req, res) => {
     type: '',
     authors: '',
     submittedTo: '',
+    detail: '',
     name: '',
   };
   (reqPaper.type === '') ? error.code = 'Select type' : '';
   (reqPaper.name === '') ? error.name = 'Input name' : '';
-  (reqPaper.authors === '') ? error.time = 'Input authors' : '';
+  (reqPaper.authors === '') ? error.authors = 'Input authors' : '';
   (reqPaper.submittedTo === '') ? error.time = 'Input submit date' : '';
-  if (!req.file) {
-    res.render('admin/pages/paper-form', {
-      edit: false,
-      published: reqPaper.published === 'on',
-      type: reqPaper.type,
-      name: reqPaper.name,
-      authors: reqPaper.authors,
-      submittedTo: reqPaper.submittedTo,
-      id: reqPaper.id ? reqPaper.id : '',
-      error,
-    });
-    return;
-  }
-  const pdfPath = `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().replace(/ /g, '')}.pdf`;
+  // if (!req.file) {
+  //   res.render('admin/pages/paper-form', {
+  //     edit: false,
+  //     published: reqPaper.published === 'on',
+  //     type: reqPaper.type,
+  //     name: reqPaper.name,
+  //     authors: reqPaper.authors,
+  //     submittedTo: reqPaper.submittedTo,
+  //     id: reqPaper.id ? reqPaper.id : '',
+  //     error,
+  //   });
+  //   return;
+  // }
+  // const pdfPath = req.file ? `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().trim().replace(/[^a-zA-Z0-9.]/g, "").replace(/ /g, '')}` : '';
   const paper = new Paper({
     published: reqPaper.active === 'on',
     type: reqPaper.type,
     name: reqPaper.name,
-    authors: reqPaper.authors,
+    authors: reqPaper.authors.split(','),
     submittedTo: reqPaper.submittedTo,
-    pdfPath,
+    detail: reqPaper.detail,
+    pdfPath: req.file ? `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().trim().replace(/[^a-zA-Z0-9.]/g, "").replace(/ /g, '')}` : '',
   });
+  // console.log(reqPaper.authors.split(','));
+  // console.log(reqPaper.authors.split(','));
+  // return;
+  reqPaper.pdfPath = req.file ? `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().trim().replace(/[^a-zA-Z0-9.]/g, "").replace(/ /g, '')}` : '';
   if (reqPaper.id) {
-    let { id, ...rest } = reqPaper;
-    rest.active = reqPaper.active === 'on';
+    let {id, ...rest} = reqPaper;
+    rest.published = reqPaper.published === 'on';
+    rest.authors = reqPaper.authors.split(',');
     Paper.put(id, rest, (err) => {
       if (err) {
         res.render('admin/pages/paper-form', {
@@ -445,6 +455,7 @@ app.post('/admin/paper/form', upload.single('pdf'), (req, res) => {
           name: reqPaper.name,
           authors: reqPaper.authors,
           submittedTo: reqPaper.submittedTo,
+          detail: reqPaper.detail,
           id: reqPaper.id ? reqPaper.id : '',
           error,
         });
@@ -462,6 +473,7 @@ app.post('/admin/paper/form', upload.single('pdf'), (req, res) => {
           name: reqPaper.name,
           authors: reqPaper.authors,
           submittedTo: reqPaper.submittedTo,
+          detail: reqPaper.detail,
           id: reqPaper.id ? reqPaper.id : '',
           error,
         });
@@ -530,7 +542,7 @@ app.get('/admin/people/:id', (req, res) => {
   });
 });
 app.post('/admin/people/form', upload.single('avatar'), (req, res) => {
-  const reqPaper = req.body;
+  const reqPeople = req.body;
   let error = {
     avatar: !req.file ? 'Select a picture' : '',
     field: '',
@@ -541,57 +553,58 @@ app.post('/admin/people/form', upload.single('avatar'), (req, res) => {
     profilePage: '',
     address: '',
   };
-  (reqPaper.field === '') ? error.field = 'Input field' : '';
-  (reqPaper.name === '') ? error.name = 'Input name' : '';
-  (reqPaper.email === '') ? error.email = 'Input email' : '';
+  // (reqPeople.field === '') ? error.field = 'Input field' : '';
+  (reqPeople.name === '') ? error.name = 'Input name' : '';
+  (reqPeople.email === '') ? error.email = 'Input email' : '';
   if (!req.file) {
     res.render('admin/pages/people-form', {
       edit: false,
-      graduated: reqPaper.graduated === 'on',
-      type: reqPaper.type,
-      name: reqPaper.name,
-      email: reqPaper.email,
-      field: reqPaper.field,
-      title: reqPaper.title,
-      occupation: reqPaper.occupation,
-      address: reqPaper.address,
-      profilePage: reqPaper.profilePage,
-      submittedTo: reqPaper.submittedTo,
-      id: reqPaper.id ? reqPaper.id : '',
+      graduated: reqPeople.graduated === 'on',
+      type: reqPeople.type,
+      name: reqPeople.name,
+      email: reqPeople.email,
+      field: reqPeople.field,
+      title: reqPeople.title,
+      occupation: reqPeople.occupation,
+      address: reqPeople.address,
+      profilePage: reqPeople.profilePage,
+      submittedTo: reqPeople.submittedTo,
+      id: reqPeople.id ? reqPeople.id : '',
       error,
     });
     return;
   }
-  const pdfPath = `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().replace(/ /g, '')}.pdf`;
+  const imagePath = `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().trim().replace(/[^a-zA-Z0-9.]/g, "").replace(/ /g, '')}`;
   const people = new People({
-    graduated: reqPaper.graduated === 'on',
-    type: reqPaper.type,
-    name: reqPaper.name,
-    email: reqPaper.email,
-    field: reqPaper.field,
-    title: reqPaper.title,
-    occupation: reqPaper.occupation,
-    address: reqPaper.address,
-    profilePage: reqPaper.profilePage,
-    pdfPath,
+    graduated: reqPeople.graduated === 'on',
+    type: reqPeople.type,
+    name: reqPeople.name,
+    email: reqPeople.email,
+    field: reqPeople.field,
+    title: reqPeople.title,
+    occupation: reqPeople.occupation,
+    address: reqPeople.address,
+    profilePage: reqPeople.profilePage,
+    imagePath,
   });
-  if (reqPaper.id) {
-    let { id, ...rest } = reqPaper;
-    rest.graduated = reqPaper.graduated === 'on';
+  reqPeople.imagePath = req.file ? `http://islab.snu.ac.kr/upload/${req.file.originalname.toLowerCase().trim().replace(/[^a-zA-Z0-9.]/g, "").replace(/ /g, '')}` : '';
+  if (reqPeople.id) {
+    let {id, ...rest} = reqPeople;
+    rest.graduated = reqPeople.graduated === 'on';
     People.put(id, rest, (err) => {
       if (err) {
         res.render('admin/pages/people-form', {
           edit: false,
-          graduated: reqPaper.graduated === 'on',
-          type: reqPaper.type,
-          name: reqPaper.name,
-          email: reqPaper.email,
-          field: reqPaper.field,
-          title: reqPaper.title,
-          occupation: reqPaper.occupation,
-          address: reqPaper.address,
-          profilePage: reqPaper.profilePage,
-          id: reqPaper.id ? reqPaper.id : '',
+          graduated: reqPeople.graduated === 'on',
+          type: reqPeople.type,
+          name: reqPeople.name,
+          email: reqPeople.email,
+          field: reqPeople.field,
+          title: reqPeople.title,
+          occupation: reqPeople.occupation,
+          address: reqPeople.address,
+          profilePage: reqPeople.profilePage,
+          id: reqPeople.id ? reqPeople.id : '',
           error,
         });
       } else {
@@ -603,16 +616,16 @@ app.post('/admin/people/form', upload.single('avatar'), (req, res) => {
       if (err) {
         res.render('admin/pages/people-form', {
           edit: false,
-          graduated: reqPaper.graduated === 'on',
-          type: reqPaper.type,
-          name: reqPaper.name,
-          email: reqPaper.email,
-          field: reqPaper.field,
-          title: reqPaper.title,
-          occupation: reqPaper.occupation,
-          address: reqPaper.address,
-          profilePage: reqPaper.profilePage,
-          id: reqPaper.id ? reqPaper.id : '',
+          graduated: reqPeople.graduated === 'on',
+          type: reqPeople.type,
+          name: reqPeople.name,
+          email: reqPeople.email,
+          field: reqPeople.field,
+          title: reqPeople.title,
+          occupation: reqPeople.occupation,
+          address: reqPeople.address,
+          profilePage: reqPeople.profilePage,
+          id: reqPeople.id ? reqPeople.id : '',
           error,
         });
       } else {
